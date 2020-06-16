@@ -57,7 +57,15 @@ setup(
     ],
     keywords = 'cli',
     packages = find_packages(exclude=['docs', 'tests*']),
-    install_requires = ['docopt'],
+    install_requires = [
+        'docopt',
+        'requests',
+        'qrcode',
+        'docker',
+        'pyyaml',
+        'gitignore-parser',
+        'pycryptodome',
+    ],
     extras_require = {
         'test': ['coverage', 'pytest', 'pytest-cov'],
     },
