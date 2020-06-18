@@ -5,6 +5,7 @@ from json import dumps
 
 import batik.remote.deployment as deployment
 import batik.remote.package as package
+import batik.local.image as image
 
 import os 
 import tarfile
@@ -25,16 +26,33 @@ class Hub(Base):
             res = package.create_package("batik-test")
             print(res)
 
+
         elif self.options["list"]:
             res = package.get_packages()
 
             print(res)
 
-        elif self.options["download"]:
-            with open("batik-out-pkg.tar.xz", "wb") as f:
-                res = package.download_package_image(self.options["<packageId>"], f)
 
-                print(res)
+        elif self.options["search"]:
+            res = package.search_packages(self.options["<query>"])
+
+            print(res)
+
+
+        elif self.options["download"]:
+            res = package.download_package_image(self.options["<packageId>"], "batik-out-pkg.tar.xz")
+
+            print(res)
+
+
+        elif self.options["mkimg"]:
+
+            #res = package.get_packages()
+            res = image.compose_image("", "")
+
+            print(res)
+
+
 
         elif self.options["upload"]:
             with open("batik-pkg.tar.xz", 'rb') as f:
