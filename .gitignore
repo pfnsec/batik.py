@@ -4,3 +4,6 @@
 build
 dist
 *.pyc
+batik.env.yaml
+.batik.download/
+.batik.build/
