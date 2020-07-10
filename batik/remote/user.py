@@ -3,6 +3,19 @@ import requests
 
 
 
+def me():
+
+    headers = {"Authorization": base.get_auth_token()}
+
+    r = requests.get(f"{base.HUB_URL}/user/me", headers = headers)
+
+    r.raise_for_status()
+
+    print(r.content)
+
+    return get_user_by_id(r.json()['id'])
+
+
 def get_users():
     params = {
 
@@ -21,7 +34,11 @@ def get_user_by_name(name):
 
 def get_user_by_id(id):
 
+    print(id)
+
     r = requests.get(f"{base.HUB_URL}/user/id/{id}")
+
+    print(r.content)
 
     return r.json()
 
@@ -47,8 +64,10 @@ def create_user(username, email, password):
 
     return r.content
 
+
 def session():
     return requests.Session()
+
 
 def login(session, email, password):
     params = {
