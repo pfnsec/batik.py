@@ -1,0 +1,15 @@
+exclude .gitignore
+exclude .batik.build
+exclude .batik.download
+exclude batik.env.yaml
+exclude batik.yaml
+exclude .vscode
+exclude .coverage
+exclude .travis.yml
+include README.rst
+include setup.cfg
+prune .cache
+prune .git
+prune build
+prune dist
+recursive-include tests *
