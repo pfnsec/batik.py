@@ -22,10 +22,28 @@ def load_manifest(file):
             print(exc)
 
 
+# TODO dir is ignored, dummy...
 def compose_image(image_name, dir):
+    print("compose_image")
+
+    mfst = load_manifest("./batik.yaml")
+
+    if not (os.path.isdir('.batik.build')):
+        os.mkdir('.batik.build')
+
+    print(mfst)
+
+    alias = mfst['alias']
+
+    image_name = f"{alias}.tar.xz"
+
+    image_name = os.path.join('.batik.build', image_name)
+
 
     ignore = os.path.abspath('.batikignore')
+
     print(ignore)
+
     if(os.path.exists(ignore)):
         matches = parse_gitignore(ignore)
     else:
@@ -33,6 +51,7 @@ def compose_image(image_name, dir):
 
     with tarfile.open(image_name, "w:xz") as tar:
         for file in os.listdir(dir):
+            print(file)
 
             if(file == image_name):
                 print(f"Skipping {file}")
@@ -42,4 +61,4 @@ def compose_image(image_name, dir):
                 print(f"Skipping {file}")
                 continue
 
-            tar.add(file, arcname=os.path.join(image_name, file))
+            tar.add(file, arcname=os.path.join(alias, file))
