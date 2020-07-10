@@ -7,17 +7,19 @@ Usage:
   batik init
   batik deploy 
   batik undeploy <deployId>
-  batik publish 
   batik login [create] 
   batik hub [add]
   batik hub [list]
+  batik hub [mkimg]
+  batik hub [resolve]
+  batik hub [publish]
+  batik hub [me]
   batik hub [search <query>]
-  batik hub [upload <packageId>]
+  batik hub [get <package>]
   batik hub [download <packageId>]
   batik hub [delete <packageId>]
   batik deployments
   batik clusters
-  batik publish
   batik offline
   batik install
   batik run -p <payload.yaml>

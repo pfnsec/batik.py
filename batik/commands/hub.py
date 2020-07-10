@@ -5,9 +5,11 @@ from json import dumps
 
 import batik.remote.deployment as deployment
 import batik.remote.package as package
+import batik.remote.user as user
 import batik.local.image as image
 
 import os 
+import re 
 import tarfile
 
 
@@ -26,11 +28,49 @@ class Hub(Base):
             res = package.create_package("batik-test")
             print(res)
 
+        elif self.options["me"]:
+            res = user.me()
+
+            print(res)
+
 
         elif self.options["list"]:
             res = package.get_packages()
 
             print(res)
+
+
+        elif self.options["publish"]:
+            #print("puublish")
+            me = user.me()
+
+            #print(me)
+            username = me['res']['username']
+
+            mfst = image.load_manifest('./batik.yaml')
+            alias = mfst['alias']
+            
+            #print(mfst)
+
+            pkg_info = package.get_package_by_name(username, alias)
+            print(pkg_info)
+
+            if pkg_info['data'] == None:
+                res = package.create_package(alias)
+                print(res)
+
+                pkg_info = package.get_package_by_name(username, alias)
+
+            package_id = pkg_info['data']['id']
+
+            print(f"Publishing to @{username}/{alias}...")
+            print(f"Package ID: {package_id}")
+
+            image_name = f"{alias}.tar.xz"
+            image_name = os.path.join('./.batik.build', image_name)
+
+            with open(image_name, 'rb') as f:
+                package.upload_package_image(package_id, f)
 
 
         elif self.options["search"]:
@@ -39,24 +79,75 @@ class Hub(Base):
             print(res)
 
 
+        elif self.options["get"]:
+
+            r = re.match("@(.+)/(.+)", self.options["<package>"])
+
+            username = r.group(1)
+            alias = r.group(2)
+            print(username, alias)
+
+            res = package.get_package_by_name(username, alias)
+
+            package_id = res['data']['id']
+
+            path = os.path.join(username, f"{alias}.tar.xz")
+
+            res = package.download_package_image(package_id, username)
+            
+
+
+
         elif self.options["download"]:
-            res = package.download_package_image(self.options["<packageId>"], "batik-out-pkg.tar.xz")
+            #res = package.download_package_image(self.options["<packageId>"], "batik-out-pkg.tar.xz")
 
             print(res)
 
 
         elif self.options["mkimg"]:
+            print("mkimg")
 
             #res = package.get_packages()
-            res = image.compose_image("", "")
+            res = image.compose_image("", os.curdir)
 
             print(res)
 
 
+        elif self.options["resolve"]:
+            #res = package.get_packages()
+            print("resolve")
 
-        elif self.options["upload"]:
-            with open("batik-pkg.tar.xz", 'rb') as f:
-                package.upload_package_image(self.options["<packageId>"], f)
+            deps = {}
+
+            mfst = image.load_manifest('./batik.yaml')
+
+            for s in mfst['steps']:
+                r = re.match("(.+)/(.+).(.+)", s['name'])
+
+                username = r.group(1)
+                alias = r.group(2)
+                print(username, alias)
+
+                layer = f'{username}/{alias}'
+
+                # Already fetched this layer?
+                if(layer in deps): 
+                    continue
+                else:
+                    deps[layer] = "unloaded"
+
+
+                res = package.get_package_by_name(username, alias)
+
+                package_id = res['data']['id']
+
+                path = os.path.join(username, f"{alias}.tar.xz")
+
+                res = package.download_package_image(package_id, username, alias)
+
+                print(res)
+
+
 
 
         #print('You supplied the following options:', dumps(self.options, indent=2, sort_keys=True))
