@@ -122,7 +122,7 @@ class Hub(Base):
             mfst = image.load_manifest('./batik.yaml')
 
             for s in mfst['steps']:
-                r = re.match("(.+)/(.+).(.+)", s['name'])
+                r = re.match("(.+)/(.+)\.(.+)", s['name'])
 
                 username = r.group(1)
                 alias = r.group(2)
