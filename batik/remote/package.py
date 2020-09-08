@@ -9,26 +9,29 @@ import batik.local.image as image
 import json
 
 
-def get_packages():
+def get_packages(query, page):
     params = {
-
+        'query': query,
+        'page': page,
     }
 
-    r = requests.get(f"{base.HUB_URL}/package/", params)
+    r = requests.get(f"{base.HUB_URL}/cmd/package", params)
 
     return r.json()
 
 
-def get_package(user, alias):
+def get_package(username, alias):
     params = {
-        "user": user,
+        "username": username,
         "alias": alias,
     }
 
-    r = requests.get(f"{base.HUB_URL}/package/name/{user}/{alias}")
+    r = requests.get(f"{base.HUB_URL}/cmd/package/{username}/{alias}")
 
     return r.json()
 
+
+# Marked for delete...
 def search_packages(query):
     params = {
         "query": query
@@ -40,7 +43,7 @@ def search_packages(query):
 
 
 # TODO: do package images need tags? I mean, of course they do. Add tags.
-def upload_package_image(id, file):
+def upload_package_image(username, alias, file):
 
     params = {
         # "tag": tag,
@@ -57,7 +60,7 @@ def upload_package_image(id, file):
     }
     
     r = requests.post (
-        f"{base.HUB_URL}/package/id/{id}/upload", 
+        f"{base.HUB_URL}/cmd/package/{username}/{alias}/upload", 
 
         files = {
             "file": file
@@ -72,9 +75,9 @@ def upload_package_image(id, file):
     return r.json()
 
 
-def download_package_image(id, subdir, alias):
+def download_package_image(username, alias):
 
-    subdir = os.path.join('batik_layers', subdir)
+    subdir = os.path.join('batik_layers', username)
 
     layer_path = os.path.join(subdir, alias)
 
@@ -99,7 +102,7 @@ def download_package_image(id, subdir, alias):
         # "hash": hash
     }
 
-    r = requests.get(f"{base.HUB_URL}/package/id/{id}/latest", params)
+    r = requests.get(f"{base.HUB_URL}/cmd/package/{username}/{alias}/latest", params)
     r.raise_for_status()
 
     cd = r.headers['content-disposition']
@@ -144,28 +147,39 @@ def get_package_by_name(user, alias):
 
     }
 
-    r = requests.get(f"{base.HUB_URL}/package/name/{user}/{alias}", params)
+    r = requests.get(f"{base.HUB_URL}/cmd/package/{user}/{alias}", params)
+    if not r.ok:
+        return None
 
     return r.json()
 
 
-def create_package(alias):
-    params = {
+def create_package(username, alias):
+    data = {
+        "username": username,
         "alias": alias
     }
 
     headers = {"Authorization": base.get_auth_token()}
 
-    r = requests.get(f"{base.HUB_URL}/package/create", params, headers=headers)
+    r = requests.post (
+        f"{base.HUB_URL}/cmd/package", 
+
+
+        json = data,
+
+        headers = headers
+        
+    )
 
     return r.content
 
 
-def delete_package(packageId):
+def delete_package(username, alias):
     params = {
-        "packageId": packageId
+        #"packageId": packageId
     }
 
-    r = requests.get(f"{base.HUB_URL}/package/delete", params)
+    r = requests.delete(f"{base.HUB_URL}/cmd/package/{username}/{alias}", params)
 
     return r.content

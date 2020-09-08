@@ -9,7 +9,7 @@ Usage:
   batik undeploy <deployId>
   batik login [create] 
   batik hub [add]
-  batik hub [list]
+  batik hub [list <query> [-p <page>]]
   batik hub [mkimg]
   batik hub [resolve]
   batik hub [publish]

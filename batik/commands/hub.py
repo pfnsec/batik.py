@@ -7,6 +7,7 @@ import batik.remote.deployment as deployment
 import batik.remote.package as package
 import batik.remote.user as user
 import batik.local.image as image
+import batik.local.batik_env as batik_env
 
 import os 
 import re 
@@ -35,17 +36,15 @@ class Hub(Base):
 
 
         elif self.options["list"]:
-            res = package.get_packages()
+            page = self.options.get("<page>") or 1
+            query = self.options.get("<query>") or ""
+            res = package.get_packages(self.options["<query>"], page)
 
             print(res)
 
 
         elif self.options["publish"]:
-            #print("puublish")
-            me = user.me()
-
-            #print(me)
-            username = me['res']['username']
+            username = batik_env.get('username')
 
             mfst = image.load_manifest('./batik.yaml')
             alias = mfst['alias']
@@ -55,22 +54,22 @@ class Hub(Base):
             pkg_info = package.get_package_by_name(username, alias)
             print(pkg_info)
 
-            if pkg_info['data'] == None:
-                res = package.create_package(alias)
+            if pkg_info == None:
+                res = package.create_package(username, alias)
                 print(res)
 
                 pkg_info = package.get_package_by_name(username, alias)
+            print(pkg_info)
 
-            package_id = pkg_info['data']['id']
 
             print(f"Publishing to @{username}/{alias}...")
-            print(f"Package ID: {package_id}")
+            print(f"Package ID: {pkg_info}")
 
             image_name = f"{alias}.tar.xz"
             image_name = os.path.join('./.batik.build', image_name)
 
             with open(image_name, 'rb') as f:
-                package.upload_package_image(package_id, f)
+                package.upload_package_image(username, alias, f)
 
 
         elif self.options["search"]:
@@ -89,11 +88,11 @@ class Hub(Base):
 
             res = package.get_package_by_name(username, alias)
 
-            package_id = res['data']['id']
+            package_id = res['id']
 
             path = os.path.join(username, f"{alias}.tar.xz")
 
-            res = package.download_package_image(package_id, username)
+            res = package.download_package_image(username, alias)
             
 
 
@@ -138,12 +137,13 @@ class Hub(Base):
 
 
                 res = package.get_package_by_name(username, alias)
+                print(res)
 
-                package_id = res['data']['id']
+                package_id = res['id']
 
                 path = os.path.join(username, f"{alias}.tar.xz")
 
-                res = package.download_package_image(package_id, username, alias)
+                res = package.download_package_image(username, alias)
 
                 print(res)
 
