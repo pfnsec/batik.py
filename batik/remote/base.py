@@ -7,18 +7,12 @@ import os
 
 URL = batik_env.get('cluster_url') or "https://cluster.batik.sh"
 HUB_URL = batik_env.get('hub_url') or "https://hub.batik.sh"
+CLUSTER_URL = batik_env.get('cluster_url') or "https://cluster.batik.sh"
 
 def get_auth_token():
 
     if not batik_env.get("token"):
         print("No token!")
         return
-        print(f"Logging into {HUB_URL}")
-        email    = batik.env("email") or input("Email: ") 
-        password = batik.env("password") or input("Password: ") 
-
-        with user.session() as session:
-            res = user.login(session, email, password)
-            print("login", res)
     else:
         return batik_env.get("token")

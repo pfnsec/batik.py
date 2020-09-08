@@ -8,7 +8,9 @@ def get_deployments():
 
     }
 
-    r = requests.get(f"{base.URL}/deployment/", params)
+    headers = {"Authorization": base.get_auth_token()}
+
+    r = requests.get(f"{base.CLUSTER_URL}/cmd/deployment/", params, headers=headers)
 
     return r.json()
 
@@ -18,28 +20,38 @@ def get_deployment(id):
 
     }
 
-    r = requests.get(f"{base.URL}/deployment/{id}", params)
+    headers = {"Authorization": base.get_auth_token()}
+
+    r = requests.get(f"{base.CLUSTER_URL}/cmd/deployment/{id}", params, header=headers)
 
     return r.json()
 
 
-def deploy():
-    params = {
+def deploy(manifest):
 
+    data = {
+        "manifest": manifest
     }
 
-    r = requests.get(f"{base.URL}/deployment/create", params)
+    headers = {"Authorization": base.get_auth_token()}
+
+    r = requests.post (
+        f"{base.CLUSTER_URL}/cmd/deployment", 
+
+        json = data,
+
+        headers = headers
+    )
 
     return r.content
 
 
 def undeploy(id):
     params = {
-        "deployId": id
     }
 
-    r = requests.get(f"{base.URL}/deployment/delete", params)
+    r = requests.delete(f"{base.CLUSTER_URL}/cmd/deployment/{id}", params)
 
-    #r = requests.delete(f"{base.URL}/deployment/{id}", params)
+    #r = requests.delete(f"{base.CLUSTER_URL}/deployment/{id}", params)
 
     return r.content
