@@ -2,6 +2,7 @@ from .hello import *
 from .auth import *
 from .deploy import *
 from .undeploy import *
+from .trigger import *
 from .clusters import *
 from .deployments import *
 from .hub import *
