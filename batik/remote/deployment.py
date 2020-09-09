@@ -50,7 +50,9 @@ def undeploy(id):
     params = {
     }
 
-    r = requests.delete(f"{base.CLUSTER_URL}/cmd/deployment/{id}", params)
+    headers = {"Authorization": base.get_auth_token()}
+
+    r = requests.delete(f"{base.CLUSTER_URL}/cmd/deployment/{id}", headers = headers)
 
     #r = requests.delete(f"{base.CLUSTER_URL}/deployment/{id}", params)
 

@@ -12,5 +12,4 @@ class Undeploy(Base):
     def run(self):
         deployment.undeploy(self.options["<deployId>"])
 
-
-        print('You supplied the following options:', dumps(self.options, indent=2, sort_keys=True))
+       #print('You supplied the following options:', dumps(self.options, indent=2, sort_keys=True))
