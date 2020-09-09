@@ -2,27 +2,19 @@
 batik
 
 Usage:
-  batik hello
-  batik auth
-  batik init
   batik deploy 
+  batik trigger <deployId> <payload>
   batik undeploy <deployId>
-  batik login [create] 
   batik hub [add]
   batik hub [publish]
-  batik hub [list <query> [-p <page>]]
   batik hub [mkimg]
   batik hub [resolve]
-  batik hub [me]
+  batik hub [list <query> [-p <page>]]
   batik hub [search <query>]
   batik hub [get <package>]
   batik hub [download <packageId>]
   batik hub [delete <packageId>]
   batik deployments
-  batik clusters
-  batik offline
-  batik install
-  batik run -p <payload.yaml>
   batik -h | --help
   batik --version
 
@@ -51,6 +43,8 @@ def main():
 
     # Here we'll try to dynamically match the command the user is trying to run
     # with a pre-defined command class we've already created.
+
+    print(options)
 
     for (k, v) in options.items(): 
         if hasattr(batik.commands, k) and v:

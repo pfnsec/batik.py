@@ -8,6 +8,7 @@ import batik.remote.package as package
 import batik.remote.user as user
 import batik.local.image as image
 import batik.local.batik_env as batik_env
+import batik.util.resolve as resolve
 
 import os 
 import re 
@@ -29,16 +30,20 @@ class Hub(Base):
             res = package.create_package("batik-test")
             print(res)
 
-        elif self.options["me"]:
-            res = user.me()
-
-            print(res)
-
 
         elif self.options["list"]:
             page = self.options.get("<page>") or 1
             query = self.options.get("<query>") or ""
             res = package.get_packages(self.options["<query>"], page)
+
+            print(res)
+
+
+        elif self.options["mkimg"]:
+            print("mkimg")
+
+            #res = package.get_packages()
+            res = image.compose_image("", os.curdir)
 
             print(res)
 
@@ -103,49 +108,13 @@ class Hub(Base):
             print(res)
 
 
-        elif self.options["mkimg"]:
-            print("mkimg")
-
-            #res = package.get_packages()
-            res = image.compose_image("", os.curdir)
-
-            print(res)
-
-
         elif self.options["resolve"]:
             #res = package.get_packages()
             print("resolve")
 
-            deps = {}
-
             mfst = image.load_manifest('./batik.yaml')
+            resolve.fetch(mfst)
 
-            for s in mfst['steps']:
-                r = re.match("(.+)/(.+)\.(.+)", s['name'])
-
-                username = r.group(1)
-                alias = r.group(2)
-                print(username, alias)
-
-                layer = f'{username}/{alias}'
-
-                # Already fetched this layer?
-                if(layer in deps): 
-                    continue
-                else:
-                    deps[layer] = "unloaded"
-
-
-                res = package.get_package_by_name(username, alias)
-                print(res)
-
-                package_id = res['id']
-
-                path = os.path.join(username, f"{alias}.tar.xz")
-
-                res = package.download_package_image(username, alias)
-
-                print(res)
 
 
 
