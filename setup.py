@@ -62,6 +62,8 @@ setup(
         'requests',
         'qrcode',
         'docker',
+        'requests-toolbelt',
+        'clint',
         'pyyaml',
         'gitignore-parser',
         'pycryptodome',

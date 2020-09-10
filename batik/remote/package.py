@@ -7,6 +7,18 @@ import batik.remote.base as base
 import batik.local.batik_env as batik_env
 import batik.local.image as image
 import json
+from clint.textui.progress import Bar as ProgressBar
+from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
+
+
+def create_callback(encoder):
+    encoder_len = encoder.len
+    bar = ProgressBar(expected_size=encoder_len, filled_char='=')
+
+    def callback(monitor):
+        bar.show(monitor.bytes_read)
+
+    return callback
 
 
 def get_packages(query, page):
@@ -51,26 +63,42 @@ def upload_package_image(username, alias, file):
         # "hash": hash
     }
 
-    headers = {"Authorization": base.get_auth_token()}
 
     mfst = image.load_manifest('./batik.yaml')
 
     data = {
         "manifest": json.dumps(mfst)
     }
+
+    encoder = MultipartEncoder({
+        "manifest": json.dumps(mfst),
+        'file': (f'{alias}.tar.xz', file, "application/octet-stream")
+        })
+    
+    callback = create_callback(encoder)
+
+    monitor = MultipartEncoderMonitor(encoder, callback)
+
     
     r = requests.post (
         f"{base.HUB_URL}/cmd/package/{username}/{alias}/upload", 
 
-        files = {
-            "file": file
-        }, 
+        #files = monitor,
+        #files = {
+        #    "file": file
+        #}, 
 
-        data = data,
+        data = monitor,
 
-        headers = headers
+        headers = {
+            "Authorization": base.get_auth_token(),
+            "Prefer": "respond-async", 
+            "Content-Type": encoder.content_type
+        }
         
     )
+
+    print(r.content)
 
     return r.json()
 
@@ -147,8 +175,10 @@ def get_package_by_name(user, alias):
 
     }
 
-    r = requests.get(f"{base.HUB_URL}/cmd/package/{user}/{alias}", params)
-    if not r.ok:
+    try:
+        r = requests.get(f"{base.HUB_URL}/cmd/package/{user}/{alias}", params)
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as err:
         return None
 
     return r.json()
