@@ -22,9 +22,11 @@ def install_and_import(package):
 def fetch(manifest):
     deps = {}
 
-    for d in manifest['pip_deps']:
-        print("Installing pip dep: ", d)
-        install_and_import(d)
+
+    if manifest.get('pip_deps'):
+        for d in manifest['pip_deps']:
+            print("Installing pip dep: ", d)
+            install_and_import(d)
 
 
     for s in manifest['steps']:
@@ -45,8 +47,6 @@ def fetch(manifest):
 
         res = package.get_package_by_name(username, alias)
         print(res)
-
-        package_id = res['id']
 
         path = os.path.join(username, f"{alias}.tar.xz")
 
