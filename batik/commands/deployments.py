@@ -7,16 +7,13 @@ import batik.remote.deployment as deployment
 import os 
 import tarfile
 
-
-
+from pprint import pprint
 
 class Deployments(Base):
     """Deployments"""
 
     def run(self):
         res = deployment.get_deployments()
-        print(res)
-
-        
+        pprint(res)
 
         #print('You supplied the following options:', dumps(self.options, indent=2, sort_keys=True))

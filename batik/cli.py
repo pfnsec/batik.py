@@ -44,8 +44,6 @@ def main():
     # Here we'll try to dynamically match the command the user is trying to run
     # with a pre-defined command class we've already created.
 
-    print(options)
-
     for (k, v) in options.items(): 
         if hasattr(batik.commands, k) and v:
             module = getattr(batik.commands, k)

@@ -81,3 +81,27 @@ def trigger(id, payload):
     print("Triggered: ", r.json())
 
     return r.content
+
+def download(id, manifest):
+    params = {
+    }
+
+    data = {
+        "manifest": manifest
+    }
+
+    headers = {"Authorization": base.get_auth_token()}
+
+    dep = requests.get(f"{base.CLUSTER_URL}/cmd/deployment/{id}", params, header=headers)
+
+    r = requests.post (
+        f"{base.CLUSTER_URL}/cmd/deployment/{id}/download", 
+
+        json = data,
+
+        headers = headers
+    )
+
+    print("Triggered: ", r.json())
+
+    return r.content
