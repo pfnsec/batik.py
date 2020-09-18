@@ -3,6 +3,8 @@ batik
 
 Usage:
   batik deploy 
+  batik deployments
+  batik download <deployId> 
   batik trigger <deployId> <payload>
   batik undeploy <deployId>
   batik hub [add]
@@ -14,7 +16,6 @@ Usage:
   batik hub [get <package>]
   batik hub [download <packageId>]
   batik hub [delete <packageId>]
-  batik deployments
   batik -h | --help
   batik --version
 
@@ -23,7 +24,7 @@ Options:
   --version                         Show version.
 
 Examples:
-  batik hello
+  batik deployments
 
 Help:
   For help using this tool, please open an issue on the Github repository:
@@ -49,6 +50,8 @@ def main():
             module = getattr(batik.commands, k)
 
             batik.commands = getmembers(module, isclass)
+            print("batik.commands")
+            print(batik.commands)
 
             command = [command[1] for command in batik.commands if command[0] != 'Base'][0]
             command = command(options)
